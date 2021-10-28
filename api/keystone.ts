@@ -11,6 +11,9 @@ import { config } from '@keystone-next/keystone';
 // Look in the schema file for how we define our lists, and how users interact with them through graphql or the Admin UI
 import { lists } from './schema';
 
+// Get seed data from a third party person generator API.
+import { insertSeedData } from './seed-data';
+
 // Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
 import { withAuth, session } from './auth';
 
@@ -21,6 +24,11 @@ export default withAuth(
     db: {
       provider: 'sqlite',
       url: 'file:./keystone.db',
+      async onConnect(context) {
+        if (process.argv.includes('--seed-data')) {
+          await insertSeedData(context);
+        }
+      },
     },
     // This config allows us to set up features of the Admin UI https://keystonejs.com/docs/apis/config#ui
     ui: {

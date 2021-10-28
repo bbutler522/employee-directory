@@ -144,6 +144,11 @@ export const lists = {
       title: text(),
       location: text(),
       teams: relationship({ ref: 'Team.members', many: true })
+    },
+    ui: {
+      listView: {
+        initialColumns: ['firstName', 'lastName', 'email', 'title'],
+      },
     }
   }),
   Team: list({
@@ -152,13 +157,10 @@ export const lists = {
       members: relationship({
         ref: 'Employee.teams',
         ui: {
-          displayMode: 'cards',
-          cardFields: ['email'],
-          inlineEdit: { fields: ['email'] },
+          cardFields: ['firstName', 'lastName', 'email', 'teams'],
           linkToItem: true,
-          inlineCreate: { fields: ['email'] },
-          many: true
         },
+        many: true
       }),
     }
   })

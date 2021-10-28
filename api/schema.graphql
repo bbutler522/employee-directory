@@ -454,7 +454,13 @@ input TeamRelateToManyForCreateInput {
 type Team {
   id: ID!
   name: String
-  members: Employee
+  members(
+    where: EmployeeWhereInput! = {}
+    orderBy: [EmployeeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Employee!]
+  membersCount(where: EmployeeWhereInput! = {}): Int
 }
 
 input TeamWhereUniqueInput {
@@ -467,7 +473,13 @@ input TeamWhereInput {
   NOT: [TeamWhereInput!]
   id: IDFilter
   name: StringFilter
-  members: EmployeeWhereInput
+  members: EmployeeManyRelationFilter
+}
+
+input EmployeeManyRelationFilter {
+  every: EmployeeWhereInput
+  some: EmployeeWhereInput
+  none: EmployeeWhereInput
 }
 
 input TeamOrderByInput {
@@ -477,13 +489,14 @@ input TeamOrderByInput {
 
 input TeamUpdateInput {
   name: String
-  members: EmployeeRelateToOneForUpdateInput
+  members: EmployeeRelateToManyForUpdateInput
 }
 
-input EmployeeRelateToOneForUpdateInput {
-  create: EmployeeCreateInput
-  connect: EmployeeWhereUniqueInput
-  disconnect: Boolean
+input EmployeeRelateToManyForUpdateInput {
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  create: [EmployeeCreateInput!]
+  connect: [EmployeeWhereUniqueInput!]
 }
 
 input TeamUpdateArgs {
@@ -493,12 +506,12 @@ input TeamUpdateArgs {
 
 input TeamCreateInput {
   name: String
-  members: EmployeeRelateToOneForCreateInput
+  members: EmployeeRelateToManyForCreateInput
 }
 
-input EmployeeRelateToOneForCreateInput {
-  create: EmployeeCreateInput
-  connect: EmployeeWhereUniqueInput
+input EmployeeRelateToManyForCreateInput {
+  create: [EmployeeCreateInput!]
+  connect: [EmployeeWhereUniqueInput!]
 }
 
 """

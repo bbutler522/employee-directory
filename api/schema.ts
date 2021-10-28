@@ -133,4 +133,10 @@ export const lists = {
       posts: relationship({ ref: 'Post.tags', many: true }),
     },
   }),
+  Employee: list({
+    fields: {
+      firstName: text({ validation: { isRequired: true } }),
+      lastName: text({ validation: { isRequired: true } }),
+    }
+  })
 };

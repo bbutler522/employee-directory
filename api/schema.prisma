@@ -43,4 +43,17 @@ model Employee {
   id        String @id @default(cuid())
   firstName String @default("")
   lastName  String @default("")
+  email     String @default("")
+  title     String @default("")
+  location  String @default("")
+  teams     Team[] @relation("Team_members")
+}
+
+model Team {
+  id        String    @id @default(cuid())
+  name      String    @default("")
+  members   Employee? @relation("Team_members", fields: [membersId], references: [id])
+  membersId String?   @map("members")
+
+  @@index([membersId])
 }

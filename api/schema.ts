@@ -137,6 +137,29 @@ export const lists = {
     fields: {
       firstName: text({ validation: { isRequired: true } }),
       lastName: text({ validation: { isRequired: true } }),
+      email: text({ 
+        // isIndexed: 'unique',
+        isFilterable: true, 
+      }),
+      title: text(),
+      location: text(),
+      teams: relationship({ ref: 'Team.members', many: true })
+    }
+  }),
+  Team: list({
+    fields: {
+      name: text({ validation: { isRequired: true } }),
+      members: relationship({
+        ref: 'Employee.teams',
+        ui: {
+          displayMode: 'cards',
+          cardFields: ['email'],
+          inlineEdit: { fields: ['email'] },
+          linkToItem: true,
+          inlineCreate: { fields: ['email'] },
+          many: true
+        },
+      }),
     }
   })
 };

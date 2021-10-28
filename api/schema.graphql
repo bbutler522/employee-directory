@@ -42,6 +42,12 @@ type Mutation {
   updateEmployees(data: [EmployeeUpdateArgs!]!): [Employee]
   deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteEmployees(where: [EmployeeWhereUniqueInput!]!): [Employee]
+  createTeam(data: TeamCreateInput!): Team
+  createTeams(data: [TeamCreateInput!]!): [Team]
+  updateTeam(where: TeamWhereUniqueInput!, data: TeamUpdateInput!): Team
+  updateTeams(data: [TeamUpdateArgs!]!): [Team]
+  deleteTeam(where: TeamWhereUniqueInput!): Team
+  deleteTeams(where: [TeamWhereUniqueInput!]!): [Team]
   endSession: Boolean!
 }
 
@@ -366,6 +372,16 @@ type Employee {
   id: ID!
   firstName: String
   lastName: String
+  email: String
+  title: String
+  location: String
+  teams(
+    where: TeamWhereInput! = {}
+    orderBy: [TeamOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Team!]
+  teamsCount(where: TeamWhereInput! = {}): Int
 }
 
 input EmployeeWhereUniqueInput {
@@ -379,17 +395,41 @@ input EmployeeWhereInput {
   id: IDFilter
   firstName: StringFilter
   lastName: StringFilter
+  email: StringFilter
+  title: StringFilter
+  location: StringFilter
+  teams: TeamManyRelationFilter
+}
+
+input TeamManyRelationFilter {
+  every: TeamWhereInput
+  some: TeamWhereInput
+  none: TeamWhereInput
 }
 
 input EmployeeOrderByInput {
   id: OrderDirection
   firstName: OrderDirection
   lastName: OrderDirection
+  email: OrderDirection
+  title: OrderDirection
+  location: OrderDirection
 }
 
 input EmployeeUpdateInput {
   firstName: String
   lastName: String
+  email: String
+  title: String
+  location: String
+  teams: TeamRelateToManyForUpdateInput
+}
+
+input TeamRelateToManyForUpdateInput {
+  disconnect: [TeamWhereUniqueInput!]
+  set: [TeamWhereUniqueInput!]
+  create: [TeamCreateInput!]
+  connect: [TeamWhereUniqueInput!]
 }
 
 input EmployeeUpdateArgs {
@@ -400,6 +440,65 @@ input EmployeeUpdateArgs {
 input EmployeeCreateInput {
   firstName: String
   lastName: String
+  email: String
+  title: String
+  location: String
+  teams: TeamRelateToManyForCreateInput
+}
+
+input TeamRelateToManyForCreateInput {
+  create: [TeamCreateInput!]
+  connect: [TeamWhereUniqueInput!]
+}
+
+type Team {
+  id: ID!
+  name: String
+  members: Employee
+}
+
+input TeamWhereUniqueInput {
+  id: ID
+}
+
+input TeamWhereInput {
+  AND: [TeamWhereInput!]
+  OR: [TeamWhereInput!]
+  NOT: [TeamWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  members: EmployeeWhereInput
+}
+
+input TeamOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input TeamUpdateInput {
+  name: String
+  members: EmployeeRelateToOneForUpdateInput
+}
+
+input EmployeeRelateToOneForUpdateInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
+  disconnect: Boolean
+}
+
+input TeamUpdateArgs {
+  where: TeamWhereUniqueInput!
+  data: TeamUpdateInput!
+}
+
+input TeamCreateInput {
+  name: String
+  members: EmployeeRelateToOneForCreateInput
+}
+
+input EmployeeRelateToOneForCreateInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
 }
 
 """
@@ -444,6 +543,14 @@ type Query {
   ): [Employee!]
   employee(where: EmployeeWhereUniqueInput!): Employee
   employeesCount(where: EmployeeWhereInput! = {}): Int
+  teams(
+    where: TeamWhereInput! = {}
+    orderBy: [TeamOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Team!]
+  team(where: TeamWhereUniqueInput!): Team
+  teamsCount(where: TeamWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 

@@ -185,7 +185,7 @@ export const lists = {
         initialColumns: ['firstName', 'lastName', 'email', 'jobTitle'],
         pageSize: 5000,
       },
-      labelField: 'firstName',
+      labelField: 'slug',
     },
   }),
   Team: list({

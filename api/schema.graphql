@@ -48,6 +48,15 @@ type Mutation {
   updateTeams(data: [TeamUpdateArgs!]!): [Team]
   deleteTeam(where: TeamWhereUniqueInput!): Team
   deleteTeams(where: [TeamWhereUniqueInput!]!): [Team]
+  createJobTitle(data: JobTitleCreateInput!): JobTitle
+  createJobTitles(data: [JobTitleCreateInput!]!): [JobTitle]
+  updateJobTitle(
+    where: JobTitleWhereUniqueInput!
+    data: JobTitleUpdateInput!
+  ): JobTitle
+  updateJobTitles(data: [JobTitleUpdateArgs!]!): [JobTitle]
+  deleteJobTitle(where: JobTitleWhereUniqueInput!): JobTitle
+  deleteJobTitles(where: [JobTitleWhereUniqueInput!]!): [JobTitle]
   endSession: Boolean!
 }
 
@@ -373,8 +382,14 @@ type Employee {
   firstName: String
   lastName: String
   email: String
-  title: String
-  location: String
+  slug: String
+  city: String
+  state: String
+  country: String
+  dob: String
+  phone: String
+  photo: String
+  status: String
   teams(
     where: TeamWhereInput! = {}
     orderBy: [TeamOrderByInput!]! = []
@@ -382,10 +397,13 @@ type Employee {
     skip: Int! = 0
   ): [Team!]
   teamsCount(where: TeamWhereInput! = {}): Int
+  jobTitle: JobTitle
 }
 
 input EmployeeWhereUniqueInput {
   id: ID
+  email: String
+  slug: String
 }
 
 input EmployeeWhereInput {
@@ -396,9 +414,16 @@ input EmployeeWhereInput {
   firstName: StringFilter
   lastName: StringFilter
   email: StringFilter
-  title: StringFilter
-  location: StringFilter
+  slug: StringFilter
+  city: StringFilter
+  state: StringFilter
+  country: StringFilter
+  dob: StringFilter
+  phone: StringFilter
+  photo: StringFilter
+  status: StringNullableFilter
   teams: TeamManyRelationFilter
+  jobTitle: JobTitleWhereInput
 }
 
 input TeamManyRelationFilter {
@@ -412,17 +437,30 @@ input EmployeeOrderByInput {
   firstName: OrderDirection
   lastName: OrderDirection
   email: OrderDirection
-  title: OrderDirection
-  location: OrderDirection
+  slug: OrderDirection
+  city: OrderDirection
+  state: OrderDirection
+  country: OrderDirection
+  dob: OrderDirection
+  phone: OrderDirection
+  photo: OrderDirection
+  status: OrderDirection
 }
 
 input EmployeeUpdateInput {
   firstName: String
   lastName: String
   email: String
-  title: String
-  location: String
+  slug: String
+  city: String
+  state: String
+  country: String
+  dob: String
+  phone: String
+  photo: String
+  status: String
   teams: TeamRelateToManyForUpdateInput
+  jobTitle: JobTitleRelateToOneForUpdateInput
 }
 
 input TeamRelateToManyForUpdateInput {
@@ -430,6 +468,12 @@ input TeamRelateToManyForUpdateInput {
   set: [TeamWhereUniqueInput!]
   create: [TeamCreateInput!]
   connect: [TeamWhereUniqueInput!]
+}
+
+input JobTitleRelateToOneForUpdateInput {
+  create: JobTitleCreateInput
+  connect: JobTitleWhereUniqueInput
+  disconnect: Boolean
 }
 
 input EmployeeUpdateArgs {
@@ -441,9 +485,16 @@ input EmployeeCreateInput {
   firstName: String
   lastName: String
   email: String
-  title: String
-  location: String
+  slug: String
+  city: String
+  state: String
+  country: String
+  dob: String
+  phone: String
+  photo: String
+  status: String
   teams: TeamRelateToManyForCreateInput
+  jobTitle: JobTitleRelateToOneForCreateInput
 }
 
 input TeamRelateToManyForCreateInput {
@@ -451,20 +502,26 @@ input TeamRelateToManyForCreateInput {
   connect: [TeamWhereUniqueInput!]
 }
 
+input JobTitleRelateToOneForCreateInput {
+  create: JobTitleCreateInput
+  connect: JobTitleWhereUniqueInput
+}
+
 type Team {
   id: ID!
   name: String
-  members(
+  employees(
     where: EmployeeWhereInput! = {}
     orderBy: [EmployeeOrderByInput!]! = []
     take: Int
     skip: Int! = 0
   ): [Employee!]
-  membersCount(where: EmployeeWhereInput! = {}): Int
+  employeesCount(where: EmployeeWhereInput! = {}): Int
 }
 
 input TeamWhereUniqueInput {
   id: ID
+  name: String
 }
 
 input TeamWhereInput {
@@ -473,7 +530,7 @@ input TeamWhereInput {
   NOT: [TeamWhereInput!]
   id: IDFilter
   name: StringFilter
-  members: EmployeeManyRelationFilter
+  employees: EmployeeManyRelationFilter
 }
 
 input EmployeeManyRelationFilter {
@@ -489,7 +546,7 @@ input TeamOrderByInput {
 
 input TeamUpdateInput {
   name: String
-  members: EmployeeRelateToManyForUpdateInput
+  employees: EmployeeRelateToManyForUpdateInput
 }
 
 input EmployeeRelateToManyForUpdateInput {
@@ -506,12 +563,58 @@ input TeamUpdateArgs {
 
 input TeamCreateInput {
   name: String
-  members: EmployeeRelateToManyForCreateInput
+  employees: EmployeeRelateToManyForCreateInput
 }
 
 input EmployeeRelateToManyForCreateInput {
   create: [EmployeeCreateInput!]
   connect: [EmployeeWhereUniqueInput!]
+}
+
+type JobTitle {
+  id: ID!
+  jobTitle: String
+  employees(
+    where: EmployeeWhereInput! = {}
+    orderBy: [EmployeeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Employee!]
+  employeesCount(where: EmployeeWhereInput! = {}): Int
+}
+
+input JobTitleWhereUniqueInput {
+  id: ID
+  jobTitle: String
+}
+
+input JobTitleWhereInput {
+  AND: [JobTitleWhereInput!]
+  OR: [JobTitleWhereInput!]
+  NOT: [JobTitleWhereInput!]
+  id: IDFilter
+  jobTitle: StringFilter
+  employees: EmployeeManyRelationFilter
+}
+
+input JobTitleOrderByInput {
+  id: OrderDirection
+  jobTitle: OrderDirection
+}
+
+input JobTitleUpdateInput {
+  jobTitle: String
+  employees: EmployeeRelateToManyForUpdateInput
+}
+
+input JobTitleUpdateArgs {
+  where: JobTitleWhereUniqueInput!
+  data: JobTitleUpdateInput!
+}
+
+input JobTitleCreateInput {
+  jobTitle: String
+  employees: EmployeeRelateToManyForCreateInput
 }
 
 """
@@ -564,6 +667,14 @@ type Query {
   ): [Team!]
   team(where: TeamWhereUniqueInput!): Team
   teamsCount(where: TeamWhereInput! = {}): Int
+  jobTitles(
+    where: JobTitleWhereInput! = {}
+    orderBy: [JobTitleOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [JobTitle!]
+  jobTitle(where: JobTitleWhereUniqueInput!): JobTitle
+  jobTitlesCount(where: JobTitleWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 

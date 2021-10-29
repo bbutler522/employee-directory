@@ -137,24 +137,65 @@ export const lists = {
     fields: {
       firstName: text({ validation: { isRequired: true } }),
       lastName: text({ validation: { isRequired: true } }),
-      email: text({ 
-        // isIndexed: 'unique',
-        isFilterable: true, 
+      email: text({
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+        isFilterable: true,
       }),
-      title: text(),
-      location: text(),
-      teams: relationship({ ref: 'Team.members', many: true })
+      slug: text({
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+        isFilterable: true,
+      }),
+      city: text(),
+      state: text(),
+      country: text(),
+      dob: text(),
+      phone: text(),
+      photo: text(),
+      status: select({
+        options: [
+          { label: 'Remote', value: 'remote' },
+          { label: 'In Office', value: 'office' },
+          { label: 'Vacation', value: 'vacation' },
+          { label: 'Off', value: 'off' },
+        ],
+        defaultValue: 'remote',
+        ui: {
+          displayMode: 'segmented-control',
+        },
+      }),
+      teams: relationship({ 
+        ref: 'Team.employees',
+        many: true,
+        ui: {
+          labelField: 'name',
+        }
+      }),
+      jobTitle: relationship({ 
+        ref: 'JobTitle.employees', 
+        many: false,
+        ui: {
+          labelField: 'jobTitle',
+        }
+      }),
     },
     ui: {
       listView: {
-        initialColumns: ['firstName', 'lastName', 'email', 'title'],
+        initialColumns: ['firstName', 'lastName', 'email', 'jobTitle'],
+        pageSize: 5000,
       },
-    }
+      labelField: 'firstName',
+    },
   }),
   Team: list({
     fields: {
-      name: text({ validation: { isRequired: true } }),
-      members: relationship({
+      name: text({
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+        isFilterable: true,
+      }),
+      employees: relationship({
         ref: 'Employee.teams',
         ui: {
           cardFields: ['firstName', 'lastName', 'email', 'teams'],
@@ -162,6 +203,34 @@ export const lists = {
         },
         many: true
       }),
+    },
+    ui: {
+      listView: {
+        initialColumns: ['name'],
+      },
     }
+  }),
+  JobTitle: list({
+    fields: {
+      jobTitle: text({
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+        isFilterable: true,
+      }),
+      employees: relationship({
+        ref: 'Employee.jobTitle',
+        ui: {
+          cardFields: ['firstName', 'lastName', 'email', 'teams'],
+          linkToItem: true,
+        },
+        many: true
+      }),
+    },
+    ui: {
+      listView: {
+        initialColumns: ['jobTitle'],
+      },
+      labelField: 'jobTitle',
+    },
   })
 };

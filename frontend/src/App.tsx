@@ -25,7 +25,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <div>
+        <div className="flex flex-row">
           <nav>
             <ul>
               <li>
@@ -34,8 +34,7 @@ function App() {
             </ul>
           </nav>
 
-          {/* A <Switch> looks through its children <Route>s and
-              renders the first one that matches the current URL. */}
+
           <Switch>
             <Route path="/">
               <DirectoryPage />

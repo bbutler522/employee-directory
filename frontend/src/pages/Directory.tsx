@@ -6,18 +6,6 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-export default function DirectoryPage() {
-  
-
-  return (
-    <div>
-      <p>Hello</p>
-      <Employees />
-    </div>
-  );
-}
-
-
 
 const ALL_EMPLOYEES = gql`
   query Employees {
@@ -42,6 +30,46 @@ const ALL_EMPLOYEES = gql`
   }
 `;
 
+const COUNT_EMPLOYEES = gql`
+  query countEmployees {
+    employeesCount
+    remoteCount: employeesCount(where: {status: {equals: "remote"}})
+    officeCount: employeesCount(where: {status: {equals: "office"}})
+    vacationCount: employeesCount(where: {status: {equals: "vacation"}})
+    offCount: employeesCount(where: {status: {equals: "off"}})
+  }
+`
+
+export default function DirectoryPage() {
+  const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
+
+  return (
+    <div>
+      <p>People</p>
+      <p>{data && data.employeesCount}</p>
+      <div className="flex flex-column">
+        <div className="flex flex-col">
+          <p>Remote</p>
+          <p>{data && data.remoteCount}</p>
+        </div>
+        <div className="flex flex-col">
+          <p>In Office</p>
+          <p>{data && data.officeCount}</p>
+        </div>
+        <div className="flex flex-col">
+          <p>Vacation</p>
+          <p>{data && data.vacationCount}</p>
+        </div>
+        <div className="flex flex-col">
+          <p>Off</p>
+          <p>{data && data.offCount}</p>
+        </div>
+      </div>
+      <Employees />
+    </div>
+  );
+}
+
 function Employees() {
   const { loading, error, data } = useQuery(ALL_EMPLOYEES);
 
@@ -56,7 +84,7 @@ function Employees() {
             {employee.photo ?
             <img src={employee.photo} className="min-w-full min-h-full" />
             : 
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="4 0 40 40" className="min-w-full min-h-full fill-current text-purple-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" className="min-w-full min-h-full fill-current text-blue-100">
               <path d="M24 24c4.42 0 8-3.59 8-8 0-4.42-3.58-8-8-8s-8 3.58-8 8c0 4.41 3.58 8 8 8zm0 4c-5.33 0-16 2.67-16 8v4h32v-4c0-5.33-10.67-8-16-8z"/>
               <path d="M0 0h48v48h-48z" fill="none"/>
             </svg> 

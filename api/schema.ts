@@ -147,6 +147,7 @@ export const lists = {
         isIndexed: 'unique',
         isFilterable: true,
       }),
+      title: text(),
       city: text(),
       state: text(),
       country: text(),
@@ -166,23 +167,16 @@ export const lists = {
         },
       }),
       teams: relationship({ 
-        ref: 'Team.employees',
+        ref: 'Team',
         many: true,
         ui: {
           labelField: 'name',
         }
       }),
-      jobTitle: relationship({ 
-        ref: 'JobTitle.employees', 
-        many: false,
-        ui: {
-          labelField: 'jobTitle',
-        }
-      }),
     },
     ui: {
       listView: {
-        initialColumns: ['firstName', 'lastName', 'email', 'jobTitle'],
+        initialColumns: ['firstName', 'lastName', 'email', 'title'],
         pageSize: 5000,
       },
       labelField: 'slug',
@@ -196,7 +190,7 @@ export const lists = {
         isFilterable: true,
       }),
       employees: relationship({
-        ref: 'Employee.teams',
+        ref: 'Employee',
         ui: {
           cardFields: ['firstName', 'lastName', 'email', 'teams'],
           linkToItem: true,
@@ -210,27 +204,4 @@ export const lists = {
       },
     }
   }),
-  JobTitle: list({
-    fields: {
-      jobTitle: text({
-        validation: { isRequired: true },
-        isIndexed: 'unique',
-        isFilterable: true,
-      }),
-      employees: relationship({
-        ref: 'Employee.jobTitle',
-        ui: {
-          cardFields: ['firstName', 'lastName', 'email', 'teams'],
-          linkToItem: true,
-        },
-        many: true
-      }),
-    },
-    ui: {
-      listView: {
-        initialColumns: ['jobTitle'],
-      },
-      labelField: 'jobTitle',
-    },
-  })
 };

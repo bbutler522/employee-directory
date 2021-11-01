@@ -8,31 +8,6 @@ type EmployeeProps = {
 export async function insertSeedData(context: KeystoneContext) {
   console.log(`🌱 Generating and inserting seed data`);
 
-  const createTitle = async (titleData) => {
-    let title = null;
-    try {
-      title = await context.query.JobTitle.findOne({
-        where: { jobTitle: titleData },
-        query: 'id',
-      });
-    } catch (e) {}
-    if (!title) {
-      title = await context.query.JobTitle.createOne({
-        data: {
-          jobTitle: titleData, 
-        },
-        query: 'id',
-      });
-    }
-    return title;
-  };
-
-  const seedTitles = ['Software Engineer', 'Project Manager', 'HR', 'Legal', 'Manager', 'Designer', 'UX Researcher', 'Manager', 'Software Engineering Manager'];
-  for (const title of seedTitles) {
-    console.log(`🖋️ Adding title: ${title}`);
-    await createTitle(title);
-  }
-
   const createTeam = async (teamData) => {
     let team = null;
     try {
@@ -97,16 +72,18 @@ export async function insertSeedData(context: KeystoneContext) {
       const statusOptions = ['remote', 'office', 'vacation', 'off']
       const result = weightedRandom({0:0.5, 1:0.3, 2:0.1, 3:0.2});
       const status = statusOptions[result];
-      // const randomTitle = Math.floor(Math.random() * seedTitles.length);
-      // const title = {};
       
+      const seedTitles = ['Software Engineer', 'Project Manager', 'HR', 'Legal', 'Manager', 'Designer', 'UX Researcher', 'Software Engineering Manager'];
+      const randomTitle = Math.floor(Math.random() * seedTitles.length);
+      const title = seedTitles[randomTitle];
+      
+      // let jobTitle = null;
       // try {
-      //   const title = await context.query.Employee.findOne({
-      //     where: { jobTitle: {contains: 'a'} },
-      //     query: 'jobTitle',
-      //     take: 1,
+      //   jobTitle = await context.query.JobTitle.findOne({
+      //     where: { jobTitle: title },
+      //     // query: 'id',
       //   });
-      //   console.log(title)
+      //   console.log(jobTitle)
       // } catch (error) {
       //   console.log(error)
       // }
@@ -120,7 +97,7 @@ export async function insertSeedData(context: KeystoneContext) {
           city: employeeData.location.city,
           state: employeeData.location.state,
           country: employeeData.location.country,
-          // jobTitle: title,
+          title: title,
           dob: employeeData.dob.date,
           phone: employeeData.phone,
           photo: employeeData.picture.large,

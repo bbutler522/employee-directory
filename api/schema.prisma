@@ -40,33 +40,26 @@ model Tag {
 }
 
 model Employee {
-  id         String    @id @default(cuid())
-  firstName  String    @default("")
-  lastName   String    @default("")
-  email      String    @unique @default("")
-  slug       String    @unique @default("")
-  city       String    @default("")
-  state      String    @default("")
-  country    String    @default("")
-  dob        String    @default("")
-  phone      String    @default("")
-  photo      String    @default("")
-  status     String?   @default("remote")
-  teams      Team[]    @relation("Employee_teams_Team_employees")
-  jobTitle   JobTitle? @relation("Employee_jobTitle", fields: [jobTitleId], references: [id])
-  jobTitleId String?   @map("jobTitle")
-
-  @@index([jobTitleId])
+  id                  String  @id @default(cuid())
+  firstName           String  @default("")
+  lastName            String  @default("")
+  email               String  @unique @default("")
+  slug                String  @unique @default("")
+  title               String  @default("")
+  city                String  @default("")
+  state               String  @default("")
+  country             String  @default("")
+  dob                 String  @default("")
+  phone               String  @default("")
+  photo               String  @default("")
+  status              String? @default("remote")
+  teams               Team[]  @relation("Employee_teams_many")
+  from_Team_employees Team[]  @relation("Team_employees_many")
 }
 
 model Team {
-  id        String     @id @default(cuid())
-  name      String     @unique @default("")
-  employees Employee[] @relation("Employee_teams_Team_employees")
-}
-
-model JobTitle {
-  id        String     @id @default(cuid())
-  jobTitle  String     @unique @default("")
-  employees Employee[] @relation("Employee_jobTitle")
+  id                  String     @id @default(cuid())
+  name                String     @unique @default("")
+  employees           Employee[] @relation("Team_employees_many")
+  from_Employee_teams Employee[] @relation("Employee_teams_many")
 }

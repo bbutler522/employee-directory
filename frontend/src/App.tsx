@@ -25,21 +25,24 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <div className="flex flex-row">
-          <nav>
-            <ul>
-              <li>
-                <Link to="/">Directory</Link>
-              </li>
-            </ul>
-          </nav>
+        <div>
+
+          <div className="flex flex-row">
+            <nav>
+              <ul>
+                <li>
+                  <Link to="/" className="h-8 w-48">Directory</Link>
+                </li>
+              </ul>
+            </nav>
 
 
-          <Switch>
-            <Route path="/">
-              <DirectoryPage />
-            </Route>
-          </Switch>
+            <Switch>
+              <Route path="/">
+                <DirectoryPage />
+              </Route>
+            </Switch>
+          </div>
         </div>
       </Router>
     </ApolloProvider>

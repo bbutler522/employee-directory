@@ -45,26 +45,23 @@ export default function DirectoryPage() {
 
   return (
     <div>
-      <p>People</p>
-      <p>{data && data.employeesCount}</p>
-      <div className="flex flex-column">
-        <div className="flex flex-col">
-          <p>Remote</p>
-          <p>{data && data.remoteCount}</p>
-        </div>
-        <div className="flex flex-col">
-          <p>In Office</p>
-          <p>{data && data.officeCount}</p>
-        </div>
-        <div className="flex flex-col">
-          <p>Vacation</p>
-          <p>{data && data.vacationCount}</p>
-        </div>
-        <div className="flex flex-col">
-          <p>Off</p>
-          <p>{data && data.offCount}</p>
-        </div>
+      <p>People <span>{data && data.employeesCount}</span></p>
+
+      
+      <div className="flex flex-row justify-between width-full">
+
+        {/* Status Counts */}
+        <StatusCounts data={data}></StatusCounts>
+
+        {/* Add Employee */}
+        <button className="bg-blue-700 px-6 rounded-full text-white">Add Employee</button>
       </div>
+
+      {/* Table filters and format */}
+      <div className="">
+        <input></input>
+      </div>
+
       <Employees />
     </div>
   );
@@ -79,15 +76,12 @@ function Employees() {
   return (
     <div className="container 2xl grid grid-cols-4 gap-4">
       {data.employees.map((employee:any) => (
-        <a key={employee.id} href="#" className="bg-blue-50 flex flex-col justify-center items-center relative py-6 transition-all hover:bg-gray-50">
+        <a key={employee.id} href="#" className="bg-gray-50 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
           <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
             {employee.photo ?
             <img src={employee.photo} className="min-w-full min-h-full" />
             : 
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" className="min-w-full min-h-full fill-current text-blue-100">
-              <path d="M24 24c4.42 0 8-3.59 8-8 0-4.42-3.58-8-8-8s-8 3.58-8 8c0 4.41 3.58 8 8 8zm0 4c-5.33 0-16 2.67-16 8v4h32v-4c0-5.33-10.67-8-16-8z"/>
-              <path d="M0 0h48v48h-48z" fill="none"/>
-            </svg> 
+            <IconProfile></IconProfile>
             }
           </div>
           <p className="font-bold mb-2">
@@ -98,33 +92,106 @@ function Employees() {
           <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
 
           {/* Status Icon */}
-          <p className="absolute top-2 left-2 w-2 text-blue-300">
+          <p className="absolute top-2 left-2 w-2 text-blue-400">
             {employee.status && employee.status == 'remote' ?
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-                <circle fill="currentColor" stroke="currentColor" cx="12" cy="20.5" r="1.5"/>
-              </svg>
+              <IconRemote></IconRemote>
             : '' }
             {employee.status && employee.status == 'office' ?
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
+              <IconOffice></IconOffice>
             : '' }
             {employee.status && employee.status == 'vacation' ?
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
+              <IconVacation></IconVacation>
             : '' }
             {employee.status && employee.status == 'off' ?
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
+              <IconOff></IconOff>
             : '' }
 
           </p>
+
+          {/* Options button */}
+          <IconOptions></IconOptions>
           
         </a>
       ))}
     </div>
+  )
+}
+
+function StatusCounts({data}: {data:any}) {
+  return (
+    <div className="flex flex-row p-2 bg-gray-50">
+      <StatusCount data={data} count="remoteCount" name="Remote" icon={IconRemote}></StatusCount>
+      <StatusCount data={data} count="officeCount" name="In Office" icon={IconOffice}></StatusCount>
+      <StatusCount data={data} count="vacationCount" name="Vacation" icon={IconVacation}></StatusCount>
+      <StatusCount data={data} count="offCount" name="Day Off" icon={IconOff}></StatusCount>
+    </div>
+  )
+}
+
+function StatusCount({data, count, name, icon} : {data: any, count: string, name: string, icon:any}) {
+  const IconComponent = icon;
+
+  return (
+    <div className="flex flex-col px-2 w-24">
+      <p className="text-sm text-gray-500">{name}</p>
+      <p className="flex flex-row items-center">
+        <IconComponent></IconComponent>
+        {data && data[count]}
+      </p>
+    </div>
+  )
+}
+
+function IconRemote() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+      <circle fill="currentColor" stroke="currentColor" cx="12" cy="20.5" r="1.5"/>
+    </svg>
+  )
+}
+
+function IconOffice() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+    </svg>
+  )
+}
+
+function IconVacation() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+    </svg>
+  )
+}
+
+function IconOff() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+  )
+}
+
+function IconProfile() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" className="min-w-full min-h-full fill-current text-blue-100">
+      <path d="M24 24c4.42 0 8-3.59 8-8 0-4.42-3.58-8-8-8s-8 3.58-8 8c0 4.41 3.58 8 8 8zm0 4c-5.33 0-16 2.67-16 8v4h32v-4c0-5.33-10.67-8-16-8z"/>
+      <path d="M0 0h48v48h-48z" fill="none"/>
+    </svg> 
+  )
+}
+
+function IconOptions() {
+  return (
+    <button className="absolute top-2 right-2 w-auto p-1 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" stroke-width="2">
+        <circle cx="9" cy="2" r="1"></circle>
+        <circle cx="9" cy="10" r="1"></circle>
+        <circle cx="9" cy="18" r="1"></circle>
+      </svg>
+    </button>
   )
 }

@@ -58,7 +58,6 @@ function App() {
 
 function Nav() {
   let location = useLocation();
-  console.log(location)
 
   const liClasses = 'bg-white p-5 mb-2 mr-5 rounded-full shadow-md';
   const liClassesSelected = 'bg-white p-5 mb-2 pr-10 rounded-l-full selected-li shadow-md';

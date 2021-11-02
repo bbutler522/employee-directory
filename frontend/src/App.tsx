@@ -11,8 +11,6 @@ import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
-  useQuery,
-  gql
 } from "@apollo/client";
 
 import DirectoryPage from './pages/Directory';

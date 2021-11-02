@@ -6,23 +6,6 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-
-const ALL_EMPLOYEES = gql`
-  query Employees {
-    employees {
-      id
-      firstName
-      lastName
-      email
-      slug
-      city
-      state
-      country
-      dob
-      phone
-      photo
-      status
-      title
       teams {
         name
       }

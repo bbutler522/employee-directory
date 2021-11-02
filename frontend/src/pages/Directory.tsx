@@ -1,4 +1,5 @@
-
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -6,11 +7,48 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-      teams {
-        name
-      }
+
+// const ALL_EMPLOYEES = gql`
+//   query Employees {
+//     employees {
+//       id
+//       firstName
+//       lastName
+//       email
+//       slug
+//       city
+//       state
+//       country
+//       dob
+//       phone
+//       photo
+//       status
+//       title
+//       teams {
+//         name
+//       }
+
+const PAGINATED_EMPLOYEES = gql`
+  query PaginatedEmployees($skip: Int, $take: Int) {
+  employees(skip: $skip, take: $take) {
+    id
+    firstName
+    lastName
+    email
+    slug
+    city
+    state
+    country
+    dob
+    phone
+    photo
+    status
+    title
+    teams {
+      name
     }
   }
+}
 `;
 
 const COUNT_EMPLOYEES = gql`
@@ -37,7 +75,7 @@ export default function DirectoryPage() {
         <StatusCounts data={data}></StatusCounts>
 
         {/* Add Employee */}
-        <button className="bg-blue-700 px-6 rounded-full text-white">Add Employee</button>
+        <Link to="/employee/create" ><button className="bg-blue-700 px-6 py-2 rounded-full text-white">Add Employee</button></Link>
       </div>
 
       {/* Table filters and format */}
@@ -49,51 +87,73 @@ export default function DirectoryPage() {
 }
 
 function Employees() {
-  const { loading, error, data } = useQuery(ALL_EMPLOYEES);
+  const initialCount = 12;
+  const increment = 12;
+  const [count, setCount] = useState(initialCount);
+
+  let { loading, error, data, fetchMore } = useQuery(PAGINATED_EMPLOYEES, {
+    variables: {
+      skip: 0,
+      take: initialCount,
+    },
+  });
+
+  function onLoadMore() {
+    console.log(
+    fetchMore({
+      variables: {
+        skip: data.employees.length
+      },
+    }))
+    console.log(data)
+  }
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
   return (
-    <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {data.employees.map((employee:any) => (
-        <a key={employee.id} href="#" className="bg-gray-50 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
-          <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
-            {employee.photo ?
-            <img src={employee.photo} className="min-w-full min-h-full" />
-            : 
-            <IconProfile></IconProfile>
-            }
-          </div>
-          <p className="font-bold mb-2">
-            {employee.firstName} {employee.lastName} 
-          </p>
-          <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title}</p>
-          <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
-          <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
+    <div>
+      <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
+        {data.employees.map((employee:any) => (
+          <a key={employee.id} href="#" className="bg-gray-50 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
+            <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
+              {employee.photo ?
+              <img src={employee.photo} className="min-w-full min-h-full" />
+              : 
+              <IconProfile></IconProfile>
+              }
+            </div>
+            <p className="font-bold mb-2">
+              {employee.firstName} {employee.lastName} 
+            </p>
+            <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title}</p>
+            <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
+            <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
 
-          {/* Status Icon */}
-          <p className="absolute top-2 left-2 w-2 text-blue-400">
-            {employee.status && employee.status == 'remote' ?
-              <IconRemote></IconRemote>
-            : '' }
-            {employee.status && employee.status == 'office' ?
-              <IconOffice></IconOffice>
-            : '' }
-            {employee.status && employee.status == 'vacation' ?
-              <IconVacation></IconVacation>
-            : '' }
-            {employee.status && employee.status == 'off' ?
-              <IconOff></IconOff>
-            : '' }
+            {/* Status Icon */}
+            <p className="absolute top-2 left-2 w-2 text-blue-400">
+              {employee.status && employee.status == 'remote' ?
+                <IconRemote></IconRemote>
+              : '' }
+              {employee.status && employee.status == 'office' ?
+                <IconOffice></IconOffice>
+              : '' }
+              {employee.status && employee.status == 'vacation' ?
+                <IconVacation></IconVacation>
+              : '' }
+              {employee.status && employee.status == 'off' ?
+                <IconOff></IconOff>
+              : '' }
 
-          </p>
+            </p>
 
-          {/* Options button */}
-          <IconOptions></IconOptions>
-          
-        </a>
-      ))}
+            {/* Options button */}
+            <IconOptions></IconOptions>
+            
+          </a>
+        ))}
+      </div>
+      <button onClick={() => onLoadMore()}>Load More</button>
     </div>
   )
 }
@@ -176,7 +236,7 @@ function IconProfile() {
 function IconOptions() {
   return (
     <button className="absolute top-2 right-2 w-auto p-1 text-gray-400">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" stroke-width="2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" strokeWidth="2">
         <circle cx="9" cy="2" r="1"></circle>
         <circle cx="9" cy="10" r="1"></circle>
         <circle cx="9" cy="18" r="1"></circle>

@@ -7,3 +7,19 @@ html, body {
   -moz-osx-font-smoothing: auto;
 }
 
+.selected-li {
+  position: relative;
+  z-index: 1;
+
+}
+.selected-li::before {
+  content: "";
+  position: absolute;
+  height: 106%;
+  top: 0;
+  right: 0;
+  right: -6px;
+  width: 10px;
+  z-index: 0;
+  background-color: #fff;
+}

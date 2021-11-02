@@ -45,7 +45,7 @@ export default function DirectoryPage() {
 
   return (
     <div>
-      <p>People <span>{data && data.employeesCount}</span></p>
+      <p className="text-3xl font-bold text-black pt-8 pb-8">People <span className="text-gray-600">{data && data.employeesCount}</span></p>
 
       
       <div className="flex flex-row justify-between width-full">
@@ -58,9 +58,7 @@ export default function DirectoryPage() {
       </div>
 
       {/* Table filters and format */}
-      <div className="">
-        <input></input>
-      </div>
+      <OrganizeData></OrganizeData>
 
       <Employees />
     </div>
@@ -74,7 +72,7 @@ function Employees() {
   if (error) return <p>Error :(</p>;
 
   return (
-    <div className="container 2xl grid grid-cols-4 gap-4">
+    <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.employees.map((employee:any) => (
         <a key={employee.id} href="#" className="bg-gray-50 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
           <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
@@ -87,7 +85,7 @@ function Employees() {
           <p className="font-bold mb-2">
             {employee.firstName} {employee.lastName} 
           </p>
-          <p className="bg-blue-200 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title}</p>
+          <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title}</p>
           <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
           <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
 
@@ -119,7 +117,7 @@ function Employees() {
 
 function StatusCounts({data}: {data:any}) {
   return (
-    <div className="flex flex-row p-2 bg-gray-50">
+    <div className="flex flex-row p-2 bg-gray-50 rounded-lg">
       <StatusCount data={data} count="remoteCount" name="Remote" icon={IconRemote}></StatusCount>
       <StatusCount data={data} count="officeCount" name="In Office" icon={IconOffice}></StatusCount>
       <StatusCount data={data} count="vacationCount" name="Vacation" icon={IconVacation}></StatusCount>
@@ -138,6 +136,14 @@ function StatusCount({data, count, name, icon} : {data: any, count: string, name
         <IconComponent></IconComponent>
         {data && data[count]}
       </p>
+    </div>
+  )
+}
+
+function OrganizeData() {
+  return(
+    <div className="bg-gray-50 p-5 mt-4 mb-8">
+      <input></input>
     </div>
   )
 }
@@ -162,7 +168,7 @@ function IconOffice() {
 function IconVacation() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
     </svg>
   )
 }
@@ -170,7 +176,7 @@ function IconVacation() {
 function IconOff() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
     </svg>
   )
 }

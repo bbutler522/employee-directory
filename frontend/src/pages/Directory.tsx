@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
   useQuery,
   gql
 } from "@apollo/client";
@@ -115,7 +112,7 @@ function Employees() {
     <div>
       <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
         {data.employees.map((employee:any) => (
-          <a key={employee.id} href="#" className="bg-gray-50 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
+          <div key={employee.id} className="bg-gray-100 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
             <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
               {employee.photo ?
               <img src={employee.photo} className="min-w-full min-h-full" />
@@ -132,16 +129,16 @@ function Employees() {
 
             {/* Status Icon */}
             <p className="absolute top-2 left-2 w-2 text-blue-400">
-              {employee.status && employee.status == 'remote' ?
+              {employee.status && employee.status === 'remote' ?
                 <IconRemote></IconRemote>
               : '' }
-              {employee.status && employee.status == 'office' ?
+              {employee.status && employee.status === 'office' ?
                 <IconOffice></IconOffice>
               : '' }
-              {employee.status && employee.status == 'vacation' ?
+              {employee.status && employee.status === 'vacation' ?
                 <IconVacation></IconVacation>
               : '' }
-              {employee.status && employee.status == 'off' ?
+              {employee.status && employee.status === 'off' ?
                 <IconOff></IconOff>
               : '' }
 
@@ -150,7 +147,7 @@ function Employees() {
             {/* Options button */}
             <IconOptions></IconOptions>
             
-          </a>
+          </div>
         ))}
       </div>
       <button onClick={() => onLoadMore()}>Load More</button>
@@ -160,7 +157,7 @@ function Employees() {
 
 function StatusCounts({data}: {data:any}) {
   return (
-    <div className="flex flex-row p-2 bg-gray-50 rounded-lg">
+    <div className="flex flex-row p-2 bg-gray-100 rounded-lg">
       <StatusCount data={data} count="remoteCount" name="Remote" icon={IconRemote}></StatusCount>
       <StatusCount data={data} count="officeCount" name="In Office" icon={IconOffice}></StatusCount>
       <StatusCount data={data} count="vacationCount" name="Vacation" icon={IconVacation}></StatusCount>
@@ -185,8 +182,7 @@ function StatusCount({data, count, name, icon} : {data: any, count: string, name
 
 function OrganizeData() {
   return(
-    <div className="bg-gray-50 p-5 mt-4 mb-8">
-      <input></input>
+    <div className="bg-gray-100 p-5 mt-4 mb-8">
     </div>
   )
 }
@@ -235,7 +231,7 @@ function IconProfile() {
 
 function IconOptions() {
   return (
-    <button className="absolute top-2 right-2 w-auto p-1 text-gray-400">
+    <button className="absolute top-2 right-2 w-auto p-1 text-gray-400 transition-all hover:text-gray-600">
       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" strokeWidth="2">
         <circle cx="9" cy="2" r="1"></circle>
         <circle cx="9" cy="10" r="1"></circle>

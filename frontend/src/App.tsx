@@ -66,16 +66,16 @@ function Nav() {
 
     <nav className="w-36 mt-5 flex flex-col">
       <ul className="w-full flex flex-col justify-center items-center">
-        <li className={location && location.pathname == '/' ? liClassesSelected : liClasses}>
+        <li className={location && location.pathname === '/' ? liClassesSelected : liClasses}>
           <div>
-            <Link to="/" className={location && location.pathname == '/' ? linkClassesSelected : linkClasses}>
+            <Link to="/" className={location && location.pathname === '/' ? linkClassesSelected : linkClasses}>
               <IconUsers></IconUsers> Directory
             </Link>
           </div>
         </li>
-        <li className={location && location.pathname == '/employee/create' ? liClassesSelected : liClasses}>
+        <li className={location && location.pathname === '/employee/create' ? liClassesSelected : liClasses}>
           <div>
-            <Link to="../employee/create" className={location && location.pathname == '/employee/create' ? linkClassesSelected : linkClasses}> 
+            <Link to="../employee/create" className={location && location.pathname === '/employee/create' ? linkClassesSelected : linkClasses}> 
               <IconUserCreate></IconUserCreate> Create
             </Link>
           </div>

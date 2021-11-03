@@ -45,7 +45,6 @@ model Employee {
   lastName            String  @default("")
   email               String  @unique @default("")
   slug                String  @unique @default("")
-  title               String  @default("")
   city                String  @default("")
   state               String  @default("")
   country             String  @default("")
@@ -54,7 +53,11 @@ model Employee {
   photo               String  @default("")
   status              String? @default("remote")
   teams               Team[]  @relation("Employee_teams_many")
+  title               Title?  @relation("Employee_title", fields: [titleId], references: [id])
+  titleId             String? @map("title")
   from_Team_employees Team[]  @relation("Team_employees_many")
+
+  @@index([titleId])
 }
 
 model Team {
@@ -62,4 +65,10 @@ model Team {
   name                String     @unique @default("")
   employees           Employee[] @relation("Team_employees_many")
   from_Employee_teams Employee[] @relation("Employee_teams_many")
+}
+
+model Title {
+  id        String     @id @default(cuid())
+  name      String     @unique @default("")
+  employees Employee[] @relation("Employee_title")
 }

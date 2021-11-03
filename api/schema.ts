@@ -147,7 +147,7 @@ export const lists = {
         isIndexed: 'unique',
         isFilterable: true,
       }),
-      title: text(),
+      // title: text(),
       city: text(),
       state: text(),
       country: text(),
@@ -173,6 +173,9 @@ export const lists = {
           labelField: 'name',
         }
       }),
+      title: relationship({
+        ref: 'Title.employees',
+      })
     },
     ui: {
       listView: {
@@ -204,4 +207,16 @@ export const lists = {
       },
     }
   }),
+  Title: list({
+    fields: {
+      name: text({ 
+        validation: { isRequired: true },
+        isIndexed: 'unique',
+      }),
+      employees: relationship({
+        ref: 'Employee.title',
+        many: true,
+      })
+    }
+  })
 };

@@ -42,7 +42,9 @@ const PAGINATED_EMPLOYEES = gql`
     phone
     photo
     status
-    title
+    title {
+      name
+    }
     teams {
       name
     }
@@ -125,7 +127,7 @@ function Employees() {
             <p className="font-bold mb-2">
               {employee.firstName} {employee.lastName} 
             </p>
-            <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title}</p>
+            <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title && employee.title.name}</p>
             <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
             <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
 
@@ -183,6 +185,13 @@ function StatusCount({data, count, name, icon} : {data: any, count: string, name
 }
 
 
+const GET_TITLES = gql`
+  query GetTitles {
+    titles {
+      name
+    }
+  }
+`
 
 
 function IconOff() {

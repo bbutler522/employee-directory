@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useQuery,
@@ -65,8 +65,17 @@ const COUNT_EMPLOYEES = gql`
 export default function DirectoryPage() {
   const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
 
+  const [searchState, setSearchState] = useState({
+    search: '',
+  })
+
+  function handleChange(e:any) {
+    setSearchState({search: e.target.value})
+  }
+
   return (
     <div>
+      {/* Count of employees */}
       <p className="text-3xl font-bold text-black pt-8 pb-8">People <span className="text-gray-600">{data && data.employeesCount}</span></p>
 
       
@@ -80,17 +89,18 @@ export default function DirectoryPage() {
       </div>
 
       {/* Table filters and format */}
-      <OrganizeData></OrganizeData>
+      <OrganizeData searchState={searchState} onStateChange={(e:any) => handleChange(e)}></OrganizeData>
 
-      <Employees />
+      {/* List of employees and information */}
+      <Employees searchState={searchState} />
     </div>
   );
 }
 
-function Employees() {
+function Employees({...props}) {
   const initialCount = 12;
   const increment = 12;
-  const [count, setCount] = useState(initialCount);
+  const [count, setCount] = useState({});
 
   let { loading, error, data, fetchMore } = useQuery(PAGINATED_EMPLOYEES, {
     variables: {
@@ -112,10 +122,39 @@ function Employees() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
+  let dataEmployees = data.employees;
+
+  if (data && data.employees && props && props.searchState.search) {
+    const filteredEmployees = data.employees.filter(
+      (employee:any) => {
+        return (
+          employee
+          .firstName
+          .toLowerCase()
+          .includes(props.searchState.search.toLowerCase()) ||
+          employee
+          .lastName
+          .toLowerCase()
+          .includes(props.searchState.search.toLowerCase()) ||
+          employee
+          .title.name
+          .toLowerCase()
+          .includes(props.searchState.search.toLowerCase()) ||
+          employee
+          .email
+          .toLowerCase()
+          .includes(props.searchState.search.toLowerCase())
+        );
+      }
+    );
+    console.log("filtered employees", filteredEmployees)
+    dataEmployees = filteredEmployees;
+  }
+
   return (
     <div>
       <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
-        {data.employees.map((employee:any) => (
+        {dataEmployees.map((employee:any) => (
           <div key={employee.id} className="bg-gray-100 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
             <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
               {employee.photo ?
@@ -193,14 +232,30 @@ const GET_TITLES = gql`
   }
 `
 
+function OrganizeData({...props}) {
+  const { loading, error, data } = useQuery(GET_TITLES);
 
-function IconOff() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    </svg>
-  )
-}
+  console.log("Organize Data: ", props)
 
+  return(
+    <div className="bg-gray-100 p-5 mt-4 mb-8 text-gray-800 text-sm">
+      <input 
+        type="text" 
+        className="w-1/4 py-2 px-4 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400 mr-6"
+        placeholder="Search by name, email, team, etc."
+        value={props.searchState.search}
+        onChange={(e) =>
+          props.onStateChange(e)
+        }
+      ></input>
+      <select 
+        className="w-auto py-2 px-4 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400"
+        placeholder="Titles"
+      >
+        {data && data.titles.map((title:any) => (
+          <option value={title.name}>{title.name}</option>
+        ))}
+      </select>
+    </div>
   )
 }

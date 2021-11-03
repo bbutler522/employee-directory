@@ -8,31 +8,6 @@ type EmployeeProps = {
 export async function insertSeedData(context: KeystoneContext) {
   console.log(`🌱 Generating and inserting seed data`);
 
-  const createTeam = async (teamData) => {
-    let team = null;
-    try {
-      team = await context.query.Team.findOne({
-        where: { name: teamData },
-        query: 'id',
-      });
-    } catch (e) {}
-    if (!team) {
-      team = await context.query.Team.createOne({
-        data: {
-          name: teamData, 
-        },
-        query: 'id',
-      });
-    }
-    return team;
-  };
-
-  const seedTeams = ['Probable Futures', 'MTA', 'Goldman Sachs', 'VICE', 'The Players\' Tribune', 'Audubon', 'Air Mail', 'Mailchimp'];
-  for (const team of seedTeams) {
-    console.log(`👥 Adding team: ${team}`);
-    await createTeam(team);
-  }
-
   let generatedPeople = {};
 
   // Get generated people through a 3rd party API.
@@ -55,6 +30,7 @@ export async function insertSeedData(context: KeystoneContext) {
   // Check if an employee exists, and if not, create them.
   const createEmployee = async (employeeData: EmployeeProps) => {
     let employee = null;
+    let title = null;
 
     const slug = employeeData.name.first.charAt(0) + employeeData.name.last;
 
@@ -64,6 +40,7 @@ export async function insertSeedData(context: KeystoneContext) {
         query: 'id',
       });
     } catch (e) {}
+
     if (!employee) {
 
       // Set custom values
@@ -75,18 +52,49 @@ export async function insertSeedData(context: KeystoneContext) {
       
       const seedTitles = ['Software Engineer', 'Project Manager', 'HR', 'Legal', 'Manager', 'Designer', 'UX Researcher', 'Software Engineering Manager'];
       const randomTitle = Math.floor(Math.random() * seedTitles.length);
-      const title = seedTitles[randomTitle];
-      
-      // let jobTitle = null;
-      // try {
-      //   jobTitle = await context.query.JobTitle.findOne({
-      //     where: { jobTitle: title },
-      //     // query: 'id',
-      //   });
-      //   console.log(jobTitle)
-      // } catch (error) {
-      //   console.log(error)
-      // }
+      const titleName = seedTitles[randomTitle];
+      let title = null;
+
+      try {
+        title = await context.query.Title.findOne({
+          where: {name: titleName},
+          query: 'name',
+        })
+      } catch (e) {}
+      if (title === null) {
+        try {
+          console.log(`🖋️ Adding title: ${titleName}`);
+          title = await context.query.Title.createOne({
+            data: {
+              name: titleName
+            },
+            query: 'name',
+          })
+        } catch (e) {}
+      }
+
+      const seedTeams = ['Probable Futures', 'MTA', 'Goldman Sachs', 'VICE', 'The Players\' Tribune', 'Audubon', 'Air Mail', 'Mailchimp'];
+      const randomTeam = Math.floor(Math.random() * seedTitles.length);
+      const teamName = seedTitles[randomTitle];
+      let team = null;
+
+      try {
+        team = await context.query.Team.findOne({
+          where: {name: teamName},
+          query: 'name',
+        })
+      } catch (e) {}
+      if (team === null) {
+        try {
+          console.log(`👥 Adding team: ${teamName}`);
+          team = await context.query.Title.createOne({
+            data: {
+              name: teamName
+            },
+            query: 'name',
+          })
+        } catch (e) {}
+      }
 
       employee = await context.query.Employee.createOne({
         data: {
@@ -97,7 +105,8 @@ export async function insertSeedData(context: KeystoneContext) {
           city: employeeData.location.city,
           state: employeeData.location.state,
           country: employeeData.location.country,
-          title: title,
+          title: {connect: { name: titleName}},
+          team: {connect: { name: teamName}},
           dob: employeeData.dob.date,
           phone: employeeData.phone,
           photo: employeeData.picture.large,

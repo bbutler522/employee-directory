@@ -5,6 +5,8 @@ import {
   gql
 } from "@apollo/client";
 
+import { IconRemote, IconOffice, IconVacation, IconOff, IconProfile, IconOptions } from '../components/Icons';
+
 // const ALL_EMPLOYEES = gql`
 //   query Employees {
 //     employees {
@@ -180,37 +182,8 @@ function StatusCount({data, count, name, icon} : {data: any, count: string, name
   )
 }
 
-function OrganizeData() {
-  return(
-    <div className="bg-gray-100 p-5 mt-4 mb-8">
-    </div>
-  )
-}
 
-function IconRemote() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-      <circle fill="currentColor" stroke="currentColor" cx="12" cy="20.5" r="1.5"/>
-    </svg>
-  )
-}
 
-function IconOffice() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-    </svg>
-  )
-}
-
-function IconVacation() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-    </svg>
-  )
-}
 
 function IconOff() {
   return (
@@ -220,23 +193,5 @@ function IconOff() {
   )
 }
 
-function IconProfile() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" className="min-w-full min-h-full fill-current text-blue-100">
-      <path d="M24 24c4.42 0 8-3.59 8-8 0-4.42-3.58-8-8-8s-8 3.58-8 8c0 4.41 3.58 8 8 8zm0 4c-5.33 0-16 2.67-16 8v4h32v-4c0-5.33-10.67-8-16-8z"/>
-      <path d="M0 0h48v48h-48z" fill="none"/>
-    </svg> 
-  )
-}
-
-function IconOptions() {
-  return (
-    <button className="absolute top-2 right-2 w-auto p-1 text-gray-400 transition-all hover:text-gray-600">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" strokeWidth="2">
-        <circle cx="9" cy="2" r="1"></circle>
-        <circle cx="9" cy="10" r="1"></circle>
-        <circle cx="9" cy="18" r="1"></circle>
-      </svg>
-    </button>
   )
 }

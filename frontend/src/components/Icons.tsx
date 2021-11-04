@@ -42,12 +42,36 @@ export function IconProfile() {
 
 export function IconOptions() {
   return (
-    <button className="absolute top-2 right-2 w-auto p-1 text-gray-400 transition-all hover:text-gray-600">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" strokeWidth="2">
-        <circle cx="9" cy="2" r="1"></circle>
-        <circle cx="9" cy="10" r="1"></circle>
-        <circle cx="9" cy="18" r="1"></circle>
-      </svg>
-    </button>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"  viewBox="0 0 20 20" stroke="currentColor" fill="currentColor" strokeWidth="2">
+      <circle cx="9" cy="2" r="1"></circle>
+      <circle cx="9" cy="10" r="1"></circle>
+      <circle cx="9" cy="18" r="1"></circle>
+    </svg>
+  )
+}
+
+export function IconGrid() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+  )
+}
+
+export function IconList() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"></line>
+      <line x1="8" y1="12" x2="21" y2="12"></line>
+      <line x1="8" y1="18" x2="21" y2="18"></line>
+      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+    </svg>
   )
 }

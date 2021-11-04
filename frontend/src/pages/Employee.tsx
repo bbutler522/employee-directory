@@ -65,7 +65,7 @@ export default function EmployeePage() {
       <div className="h-20 bg-blue-500 -mx-10">
 
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row justify-between">
 
         {/* Employee Info */}
         <div className="flex flex-row">
@@ -222,6 +222,7 @@ function UpdateEmployeeForm({...props}) {
   }
 
   function handleDelete() {
+
     deleteEmployee()
     .then((res) => {
       setDeleted(true)
@@ -250,9 +251,9 @@ function UpdateEmployeeForm({...props}) {
 
       <EmployeeFormFields formState={formState} handleFormState={handleFormState}></EmployeeFormFields>
       
-      <div>
-        <button className="py-2 px-8 rounded-xl bg-blue-200 border border-solid border-gray-400 text-sm font-bold mr-4 transition-all hover:bg-blue-400" type="submit">Update Employee</button>
-        <button onClick={() => handleDelete()} className="py-2 px-8 rounded-xl bg-red-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-red-400" type="button">Delete Employee</button>
+      <div className="grid grid-cols-2 gap-4">
+        <button className="py-2 px-8 rounded-xl bg-blue-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-blue-400" type="submit">Update Employee</button>
+        <button onClick={() => {if (window.confirm('Are you sure you wish to delete this employee?')) handleDelete()}} className="py-2 px-8 rounded-xl bg-red-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-red-400" type="button">Delete Employee</button>
       </div>
     </form>
   )

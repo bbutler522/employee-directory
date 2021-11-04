@@ -165,6 +165,8 @@ export const lists = {
         ui: {
           displayMode: 'segmented-control',
         },
+        defaultIsFilterable: true,
+        defaultIsOrderable: true,
       }),
       teams: relationship({ 
         ref: 'Team',

@@ -7,26 +7,6 @@ import {
 
 import { IconRemote, IconOffice, IconVacation, IconOff, IconProfile, IconOptions } from '../components/Icons';
 
-// const ALL_EMPLOYEES = gql`
-//   query Employees {
-//     employees {
-//       id
-//       firstName
-//       lastName
-//       email
-//       slug
-//       city
-//       state
-//       country
-//       dob
-//       phone
-//       photo
-//       status
-//       title
-//       teams {
-//         name
-//       }
-
 const PAGINATED_EMPLOYEES = gql`
   query PaginatedEmployees($skip: Int, $take: Int) {
   employees(skip: $skip, take: $take) {
@@ -51,6 +31,30 @@ const PAGINATED_EMPLOYEES = gql`
   }
 }
 `;
+const EMPLOYEES_FILTER_TITLE = gql`
+  query GetEmployeesWithTitle($skip: Int, $take: Int, $title: String) {
+    employees(skip: $skip, take: $take, where: {title: {name: {equals: $title}}}) {
+      id
+      firstName
+      lastName
+      email
+      slug
+      city
+      state
+      country
+      dob
+      phone
+      photo
+      status
+      title {
+        name
+      }
+      teams {
+        name
+      }
+    }
+  }
+`;
 
 const COUNT_EMPLOYEES = gql`
   query countEmployees {
@@ -63,33 +67,43 @@ const COUNT_EMPLOYEES = gql`
 `
 
 export default function DirectoryPage() {
-  const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
 
   const [searchState, setSearchState] = useState({
     search: '',
+    title: '',
   })
 
-  function handleChange(e:any) {
-    setSearchState({search: e.target.value})
+  function handleSearchChange(e:any) {
+    setSearchState({
+      ...searchState,
+      search: e.target.value
+    })
+  }
+
+  function handleTitleFilterChange(e:any) {
+    setSearchState({
+      ...searchState,
+      title: e.target.value
+    })
+
   }
 
   return (
     <div>
       {/* Count of employees */}
-      <p className="text-3xl font-bold text-black pt-8 pb-8">People <span className="text-gray-600">{data && data.employeesCount}</span></p>
-
+      <PeopleCount></PeopleCount>
       
       <div className="flex flex-row justify-between width-full">
 
         {/* Status Counts */}
-        <StatusCounts data={data}></StatusCounts>
+        <StatusCounts></StatusCounts>
 
         {/* Add Employee */}
         <Link to="/employee/create" ><button className="bg-blue-700 px-6 py-2 rounded-full text-white">Add Employee</button></Link>
       </div>
 
       {/* Table filters and format */}
-      <OrganizeData searchState={searchState} onStateChange={(e:any) => handleChange(e)}></OrganizeData>
+      <OrganizeData searchState={searchState} onSearchChange={(e:any) => handleSearchChange(e)} onTitleFilterChange={(e:any) => handleTitleFilterChange(e)}></OrganizeData>
 
       {/* List of employees and information */}
       <Employees searchState={searchState} />
@@ -101,11 +115,42 @@ function Employees({...props}) {
   const initialCount = 12;
   const increment = 12;
   const [count, setCount] = useState({});
+  const [queryName, setQueryName] = useState(
+    PAGINATED_EMPLOYEES
+  );
 
-  let { loading, error, data, fetchMore } = useQuery(PAGINATED_EMPLOYEES, {
+  useEffect(() => {
+    // If searching by title, use the query
+    if (props.searchState.title !== '') {
+      setQueryName(EMPLOYEES_FILTER_TITLE)
+      refetch({
+        skip: 0,
+        take: initialCount,
+        title: props.searchState.title
+      })
+    } else {
+      setQueryName(PAGINATED_EMPLOYEES)
+      refetch({
+        skip: 0,
+        take: initialCount
+      })
+    }
+  }, [props.searchState.title])
+
+  // For initial search state change, refetch
+  useEffect(() => {
+    refetch({
+      skip: 0,
+      take: initialCount,
+      title: props.searchState.title
+    })
+  }, [queryName])
+
+  let { loading, error, data, refetch, fetchMore } = useQuery(queryName, {
     variables: {
       skip: 0,
       take: initialCount,
+      title: ""
     },
   });
 
@@ -123,6 +168,14 @@ function Employees({...props}) {
   if (error) return <p>Error :(</p>;
 
   let dataEmployees = data.employees;
+
+  // if (data && data.employees && props && props.searchState.title) {
+  //   refetch({
+  //     skip: 0,
+  //     take: initialCount,
+  //     title: props.searchState.title
+  //   })
+  // }
 
   if (data && data.employees && props && props.searchState.search) {
     const filteredEmployees = data.employees.filter(
@@ -198,7 +251,17 @@ function Employees({...props}) {
   )
 }
 
-function StatusCounts({data}: {data:any}) {
+function PeopleCount() {
+  const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
+
+  return (
+    <p className="text-3xl font-bold text-black pt-8 pb-8">People <span className="text-gray-600">{data && data.employeesCount}</span></p>
+  )
+}
+
+function StatusCounts() {
+  const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
+
   return (
     <div className="flex flex-row p-2 bg-gray-100 rounded-lg">
       <StatusCount data={data} count="remoteCount" name="Remote" icon={IconRemote}></StatusCount>
@@ -245,13 +308,19 @@ function OrganizeData({...props}) {
         placeholder="Search by name, email, team, etc."
         value={props.searchState.search}
         onChange={(e) =>
-          props.onStateChange(e)
+          props.onSearchChange(e)
         }
       ></input>
       <select 
         className="w-auto py-2 px-4 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400"
         placeholder="Titles"
+        onChange={(e) => {
+          console.log(e)
+          props.onTitleFilterChange(e)
+          }
+        }
       >
+        <option value='' selected className="text-gray-100">Filter by title</option>
         {data && data.titles.map((title:any) => (
           <option value={title.name}>{title.name}</option>
         ))}

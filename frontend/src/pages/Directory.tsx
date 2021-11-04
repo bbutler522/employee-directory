@@ -5,66 +5,12 @@ import {
   gql
 } from "@apollo/client";
 
-import { IconRemote, IconOffice, IconVacation, IconOff, IconProfile, IconOptions, IconGrid, IconList } from '../components/Icons';
+import { IconRemote, IconOffice, IconVacation, IconOff, IconOptions, IconGrid, IconList } from '../components/Icons';
+import { PAGINATED_EMPLOYEES, EMPLOYEES_FILTER_TITLE, COUNT_EMPLOYEES } from '../Queryies';
 
-const PAGINATED_EMPLOYEES = gql`
-  query PaginatedEmployees($skip: Int, $take: Int) {
-  employees(skip: $skip, take: $take) {
-    id
-    firstName
-    lastName
-    email
-    slug
-    city
-    state
-    country
-    dob
-    phone
-    photo
-    status
-    title {
-      name
-    }
-    teams {
-      name
-    }
-  }
-}
-`;
-const EMPLOYEES_FILTER_TITLE = gql`
-  query GetEmployeesWithTitle($skip: Int, $take: Int, $title: String) {
-    employees(skip: $skip, take: $take, where: {title: {name: {equals: $title}}}) {
-      id
-      firstName
-      lastName
-      email
-      slug
-      city
-      state
-      country
-      dob
-      phone
-      photo
-      status
-      title {
-        name
-      }
-      teams {
-        name
-      }
-    }
-  }
-`;
-
-const COUNT_EMPLOYEES = gql`
-  query countEmployees {
-    employeesCount
-    remoteCount: employeesCount(where: {status: {equals: "remote"}})
-    officeCount: employeesCount(where: {status: {equals: "office"}})
-    vacationCount: employeesCount(where: {status: {equals: "vacation"}})
-    offCount: employeesCount(where: {status: {equals: "off"}})
-  }
-`
+import EmployeeGrid from '../components/EmployeeGrid';
+import EmployeeList from '../components/EmployeeList';
+import OrganizeData from '../components/OrganizeData';
 
 export default function DirectoryPage() {
 
@@ -221,103 +167,6 @@ function Employees({...props}) {
   )
 }
 
-function EmployeeGrid({...props}) {
-  let dataEmployees = props.employees;
-  
-  return (
-    <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
-      {dataEmployees.map((employee:any) => (
-        <div key={employee.id} className="bg-gray-100 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
-          <a href={'/employee/' + employee.slug}>
-            <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
-              {employee.photo ?
-              <img src={employee.photo} className="min-w-full min-h-full" />
-              : 
-              <IconProfile></IconProfile>
-              }
-            </div>
-          </a>
-          <p className="font-bold mb-2">
-            {employee.firstName} {employee.lastName} 
-          </p>
-          <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title && employee.title.name}</p>
-          <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
-          <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>
-
-          {/* Status Icon */}
-          <p className="absolute top-2 left-2 w-2 text-blue-400">
-            {employee.status && employee.status === 'remote' ?
-              <IconRemote></IconRemote>
-            : '' }
-            {employee.status && employee.status === 'office' ?
-              <IconOffice></IconOffice>
-            : '' }
-            {employee.status && employee.status === 'vacation' ?
-              <IconVacation></IconVacation>
-            : '' }
-            {employee.status && employee.status === 'off' ?
-              <IconOff></IconOff>
-            : '' }
-
-          </p>
-
-          {/* Options button */}
-          <button className="absolute top-2 right-2 w-auto p-1 text-gray-400 transition-all hover:text-gray-600">
-            <IconOptions></IconOptions>
-          </button>
-          
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function EmployeeList({...props}) {
-  let employees = props.employees;
-
-  return (
-    <table className="table w-full border-collapse">
-      <thead>
-      <tr className="text-left border">
-        <TableHead title="First Name"></TableHead>
-        <TableHead title="Last Name"></TableHead>
-        <TableHead title="Title"></TableHead>
-        <TableHead title="Email"></TableHead>
-        <TableHead title="Phone"></TableHead>
-        <TableHead title=""></TableHead>
-      </tr>
-      </thead>
-      <tbody>
-      {employees.map((employee:any) => (
-        <tr key={employee.slug}>
-          <TableData>{employee.firstName}</TableData>
-          <TableData>{employee.lastName}</TableData>
-          <TableData>{employee.title.name}</TableData>
-          <TableData><a href={"mailto:" + employee.email}>{employee.email}</a></TableData>
-          <TableData><a href={"tel:" + employee.phone}>{employee.phone}</a></TableData>
-          <TableData><button className="w-auto p-1 text-gray-400 transition-all hover:text-gray-600"><IconOptions></IconOptions></button></TableData>
-        </tr>
-      ))}
-      </tbody>
-    </table>
-  )
- 
-  function TableHead({...props}) {
-    return (
-      <th className="border">{props.title}</th>
-    )
-  }
-
-  // interface MyProps { children?: React.ReactNode }
-  function TableData({...props}) {
-
-    return (
-      <td className="relative">{props.children}</td>
-    )
-  }
-
-}
-
 function PeopleCount() {
   const { loading, error, data } = useQuery(COUNT_EMPLOYEES);
 
@@ -349,72 +198,6 @@ function StatusCount({data, count, name, icon} : {data: any, count: string, name
         <IconComponent></IconComponent>
         {data && data[count]}
       </p>
-    </div>
-  )
-}
-
-
-const GET_TITLES = gql`
-  query GetTitles {
-    titles {
-      name
-    }
-  }
-`
-
-function OrganizeData({...props}) {
-  const { loading, error, data } = useQuery(GET_TITLES);
-  const formatClasses = "ml-1 p-1";
-  const formatSelectedClasses = "ml-1 p-1 bg-blue-200 rounded-md";
-
-  return(
-    <div className="bg-gray-100 p-4 rounded-xl mt-4 mb-8 text-gray-800 text-sm flex flex-row justify-between items-center">
-      <div className="w-full">
-        <input 
-          type="text" 
-          className="w-2/4 py-2 px-4 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400 mr-6"
-          placeholder="Search by name, email, team, etc."
-          value={props.searchState.search}
-          onChange={(e) =>
-            props.onSearchChange(e)
-          }
-        ></input>
-        <select 
-          className="w-auto py-2 px-4 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400"
-          placeholder="Titles"
-          onChange={(e) => {
-            props.onTitleFilterChange(e)
-            }
-          }
-        >
-          <option defaultValue='' value='' className="text-gray-100">Filter by title</option>
-          {data && data.titles.map((title:any) => (
-            <option key={title.name} value={title.name}>{title.name}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-row">
-        <div className="flex flex-row mr-10">
-          <p className="mr-1 leading-loose	">Sort: </p>
-          <select className="">
-            <option value="name-asc">Name (asc)</option>
-            <option value="name-dsc">Name (dsc)</option>
-          </select>
-        </div>
-        <button 
-          onClick={() => props.onFormatChange('grid')} 
-          className={props.searchState.format === 'grid' ? formatSelectedClasses : formatClasses}
-        >
-          <IconGrid></IconGrid>
-        </button>
-        <button 
-          onClick={() => props.onFormatChange('list')} 
-          className={props.searchState.format === 'list' ? formatSelectedClasses : formatClasses}
-        >
-          <IconList></IconList>
-        </button>
-      </div>
     </div>
   )
 }

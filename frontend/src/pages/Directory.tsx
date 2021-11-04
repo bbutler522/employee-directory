@@ -124,8 +124,8 @@ export default function DirectoryPage() {
 }
 
 function Employees({...props}) {
-  const initialCount = 12;
-  const increment = 12;
+  const initialCount = 48;
+  const increment = 48;
   const [count, setCount] = useState({});
   const [queryName, setQueryName] = useState(
     PAGINATED_EMPLOYEES

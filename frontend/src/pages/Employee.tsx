@@ -171,7 +171,17 @@ const UPDATE_EMPLOYEE_MUTATION = gql`
   }
 `;
 
+const DELETE_EMPLOYEE = gql`
+  mutation DeleteEmployee($slug: String) {
+    deleteEmployee(where:{slug:$slug}) {
+      slug
+    }
+  }
+`
+
 function UpdateEmployeeForm({...props}) {
+  const [deleted, setDeleted] = useState(false)
+
   const [formState, setFormState] = useState({
     firstName: props.employee.firstName,
     lastName: props.employee.lastName,
@@ -211,12 +221,30 @@ function UpdateEmployeeForm({...props}) {
     })
   }
 
+  function handleDelete() {
+    deleteEmployee()
+    .then((res) => {
+      setDeleted(true)
+    });
+    
+  }
+
+  const [deleteEmployee] = useMutation(DELETE_EMPLOYEE, {
+    variables: {slug: props.employee.slug}
+  })
+
+  if (deleted) {
+    return (<Redirect to="/"></Redirect>)
+  }
+
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        updateEmployee();
-        props.onSubmit();
+        updateEmployee().then(() => {
+          props.onSubmit();
+        });
       }}
     >
 
@@ -224,7 +252,7 @@ function UpdateEmployeeForm({...props}) {
       
       <div>
         <button className="py-2 px-8 rounded-xl bg-blue-200 border border-solid border-gray-400 text-sm font-bold mr-4 transition-all hover:bg-blue-400" type="submit">Update Employee</button>
-        <button className="py-2 px-8 rounded-xl bg-red-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-red-400" type="submit">Delete Employee</button>
+        <button onClick={() => handleDelete()} className="py-2 px-8 rounded-xl bg-red-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-red-400" type="button">Delete Employee</button>
       </div>
     </form>
   )

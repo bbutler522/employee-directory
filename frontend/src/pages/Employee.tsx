@@ -11,6 +11,7 @@ import {
 import Moment from 'react-moment';
 
 import { IconProfile } from "../components/Icons";
+import EmployeeFormFields from '../components/forms/EmployeeFormFields';
 
 const GET_EMPLOYEE = gql`
   query GetEmployee($slug: String) {
@@ -219,35 +220,12 @@ function UpdateEmployeeForm({...props}) {
       }}
     >
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <FormField name="firstName" title="First Name" formState={formState} onChange={(e:any) => handleFormState("firstName", e)}></FormField>
-        <FormField name="lastName" title="Last Name" formState={formState} onChange={(e:any) => handleFormState("lastName", e)}></FormField>
-        <FormField name="city" title="City" formState={formState} onChange={(e:any) => handleFormState("city", e)}></FormField>
-        <FormField name="state" title="State" formState={formState} onChange={(e:any) => handleFormState("state", e)}></FormField>
-        <FormField name="country" title="Country" formState={formState} onChange={(e:any) => handleFormState("country", e)}></FormField>
-        <FormField name="dob" title="Birthday" formState={formState} onChange={(e:any) => handleFormState("dob", e)}></FormField>
-        <FormField name="title" title="Title (Must exist already atm.)" formState={formState} onChange={(e:any) => handleFormState("title", e)}></FormField>
-      </div>
+      <EmployeeFormFields formState={formState} handleFormState={handleFormState}></EmployeeFormFields>
       
       <div>
         <button className="py-2 px-8 rounded-xl bg-blue-200 border border-solid border-gray-400 text-sm font-bold mr-4 transition-all hover:bg-blue-400" type="submit">Update Employee</button>
+        <button className="py-2 px-8 rounded-xl bg-red-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-red-400" type="submit">Delete Employee</button>
       </div>
     </form>
-  )
-}
-
-function FormField({...props}) {
-  const name = props.name
-
-  return(
-    <div className="flex flex-col">
-      <label className="text-sm font-bold" htmlFor={props.name}>{props.title}</label>
-      <input value={props.formState[name]} 
-        onChange={(e) => props.onChange(e)}
-        type="text" 
-        name={props.name} 
-        className="bg-gray-100 py-1 px-2 rounded-xl border border-solid border-gray-200 outline-none transition-all focus:border-gray-400"
-      />
-    </div>
   )
 }

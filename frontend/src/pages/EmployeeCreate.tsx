@@ -3,6 +3,7 @@ import {
   useMutation,
   gql
 } from "@apollo/client";
+import EmployeeFormFields from '../components/forms/EmployeeFormFields';
 
 const CREATE_EMPLOYEE_MUTATION = gql`
   mutation CreateEmployee(
@@ -10,8 +11,27 @@ const CREATE_EMPLOYEE_MUTATION = gql`
     $lastName: String!
     $email: String!
     $slug: String!
+    $city: String!
+    $state: String!
+    $country: String!
+    $dob: String!
+    $phone: String!
+    $photo: String!
+    $title: String!
   ) {
-    createEmployee(data: {firstName: $firstName, lastName: $lastName, email: $email, slug: $slug}) {
+    createEmployee(data: {
+      firstName: $firstName, 
+      lastName: $lastName, 
+      email: $email, 
+      slug: $slug,
+      city: $city,
+      state: $state,
+      country: $country,
+      dob: $dob,
+      phone: $phone,
+      photo: $photo,
+      title: { connect: { name: $title}}
+      }) {
       firstName
       lastName
       email
@@ -26,6 +46,15 @@ export default function EmployeeCreatePage() {
     lastName: '',
     email: '',
     slug: '',
+    city: '',
+    state: '',
+    country: '',
+    dob: '',
+    phone: '',
+    photo: '',
+    status: '',
+    title: '',
+
   })
 
   const [createEmployee] = useMutation(CREATE_EMPLOYEE_MUTATION, {
@@ -34,8 +63,23 @@ export default function EmployeeCreatePage() {
       lastName: formState.lastName,
       email: formState.email,
       slug: formState.slug,
+      city: formState.city,
+      state: formState.state,
+      country: formState.country,
+      dob: formState.dob,
+      phone: formState.phone,
+      photo: formState.photo,
+      status: formState.status,
+      title: formState.title,
     }
   });
+
+  function handleFormState(name:string, e:any) {
+    setFormState({
+      ...formState,
+      [name]: e.target.value
+    })
+  }
 
   return (
     <div>
@@ -46,67 +90,8 @@ export default function EmployeeCreatePage() {
           createEmployee();
         }}
       >
-        <div className="flex flex-row mb-4">
-          <div className="flex flex-col mr-10">
-            <label htmlFor="firstName">First Name</label>
-            <input value={formState.firstName} 
-              onChange={(e) =>
-                setFormState({
-                  ...formState,
-                  firstName: e.target.value
-                })
-              }
-              type="text" 
-              name="firstName" 
-              className="bg-gray-100"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="lastName">Last Name</label>
-            <input value={formState.lastName} 
-              onChange={(e) =>
-                setFormState({
-                  ...formState,
-                  lastName: e.target.value
-                })
-              }
-              type="text" 
-              name="lastName" 
-              className="bg-gray-200" 
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-row mb-4">
-          <div className="flex flex-col mr-10">
-            <label htmlFor="email">Email</label>
-            <input value={formState.email} 
-              onChange={(e) =>
-                setFormState({
-                  ...formState,
-                  email: e.target.value
-                })
-              }
-              type="text" 
-              name="email" 
-              className="bg-gray-100"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="slug">Slug</label>
-            <input value={formState.slug} 
-              onChange={(e) =>
-                setFormState({
-                  ...formState,
-                  slug: e.target.value
-                })
-              }
-              type="text" 
-              name="slug" 
-              className="bg-gray-200" 
-            />
-          </div>
-        </div>
+        
+        <EmployeeFormFields formState={formState} handleFormState={handleFormState}></EmployeeFormFields>
         
         <button type="submit">Submit</button>
       </form>

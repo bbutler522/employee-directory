@@ -75,7 +75,7 @@ export async function insertSeedData(context: KeystoneContext) {
 
       const seedTeams = ['Probable Futures', 'MTA', 'Goldman Sachs', 'VICE', 'The Players\' Tribune', 'Audubon', 'Air Mail', 'Mailchimp'];
       const randomTeam = Math.floor(Math.random() * seedTitles.length);
-      const teamName = seedTitles[randomTitle];
+      const teamName = seedTeams[randomTeam];
       let team = null;
 
       try {
@@ -87,7 +87,7 @@ export async function insertSeedData(context: KeystoneContext) {
       if (team === null) {
         try {
           console.log(`👥 Adding team: ${teamName}`);
-          team = await context.query.Title.createOne({
+          team = await context.query.Team.createOne({
             data: {
               name: teamName
             },
@@ -106,7 +106,7 @@ export async function insertSeedData(context: KeystoneContext) {
           state: employeeData.location.state,
           country: employeeData.location.country,
           title: {connect: { name: titleName}},
-          team: {connect: { name: teamName}},
+          teams: {connect: { name: teamName}},
           dob: employeeData.dob.date,
           phone: employeeData.phone,
           photo: employeeData.picture.large,

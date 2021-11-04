@@ -228,13 +228,15 @@ function EmployeeGrid({...props}) {
     <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
       {dataEmployees.map((employee:any) => (
         <div key={employee.id} className="bg-gray-100 flex flex-col justify-center items-center relative py-6 rounded-xl transition-all hover:bg-gray-50">
-          <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
-            {employee.photo ?
-            <img src={employee.photo} className="min-w-full min-h-full" />
-            : 
-            <IconProfile></IconProfile>
-            }
-          </div>
+          <a href={'/employee/' + employee.slug}>
+            <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
+              {employee.photo ?
+              <img src={employee.photo} className="min-w-full min-h-full" />
+              : 
+              <IconProfile></IconProfile>
+              }
+            </div>
+          </a>
           <p className="font-bold mb-2">
             {employee.firstName} {employee.lastName} 
           </p>

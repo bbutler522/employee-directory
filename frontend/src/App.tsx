@@ -15,6 +15,7 @@ import {
 
 import DirectoryPage from './pages/Directory';
 import EmployeeCreatePage from './pages/EmployeeCreate';
+import EmployeePage from './pages/Employee'
 import Nav from './components/Nav';
 
 function App() {
@@ -39,6 +40,9 @@ function App() {
                   </Route>
                   <Route exact path="/employee/create">
                     <EmployeeCreatePage></EmployeeCreatePage>
+                  </Route>
+                  <Route exact path="/employee/*">
+                    <EmployeePage></EmployeePage>
                   </Route>
                   <Route path="*">
                     <Redirect to="/" />

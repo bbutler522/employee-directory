@@ -17,9 +17,11 @@ export default function EmployeeGrid({...props}) {
               }
             </div>
           </a>
-          <p className="font-bold mb-2">
-            {employee.firstName} {employee.lastName} 
-          </p>
+          <a href={'/employee/' + employee.slug}>
+            <p className="font-bold mb-2">
+              {employee.firstName} {employee.lastName} 
+            </p>
+          </a>
           <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-2">{employee.title && employee.title.name}</p>
           <a href={'tel:' + employee.phone} className="text-gray-600 transition-all hover:text-gray-900"><p>{employee.phone}</p></a>
           <a href={'mailto:' + employee.email} className="text-blue-600 hover:text-blue-900"><p>{employee.email}</p></a>

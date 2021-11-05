@@ -30,3 +30,13 @@ test(
   })
 );
 
+test(
+  'Title Create',
+  runner(async ({ context }) => {
+    const title = await context.query.Title.createOne({
+      data: { name: 'Software Engineer', employees: [] },
+      query: 'name'
+    })
+    expect(title.name).toEqual('Software Engineer');
+  })
+)

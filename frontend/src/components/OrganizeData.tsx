@@ -13,7 +13,7 @@ export default function OrganizeData({...props}) {
   const formatSelectedClasses = "ml-1 p-1 bg-blue-200 rounded-md";
 
   return(
-    <div className="bg-gray-100 p-4 rounded-xl mt-4 mb-8 text-gray-800 text-sm flex flex-row justify-between items-center">
+    <div className="bg-gray-100 p-4 rounded-xl mt-4 mb-3 text-gray-800 text-sm flex flex-row justify-between items-center">
       <div className="w-full">
         <input 
           type="text" 

@@ -30,6 +30,7 @@ export const PAGINATED_EMPLOYEES = gql`
       name
     }
   }
+  employeesCount
 }
 `;
 
@@ -56,6 +57,7 @@ export const EMPLOYEES_FILTER_TITLE = gql`
         name
       }
     }
+    employeesCount(where: {title: {name: {equals: $title}}})
   }
 `;
 

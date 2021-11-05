@@ -4,6 +4,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import ReactPaginate from 'react-paginate';
 
 import { IconRemote, IconOffice, IconVacation, IconOff, IconOptions, IconGrid, IconList } from '../components/Icons';
 import { PAGINATED_EMPLOYEES, EMPLOYEES_FILTER_TITLE, COUNT_EMPLOYEES } from '../Queryies';
@@ -13,11 +14,12 @@ import EmployeeList from '../components/EmployeeList';
 import OrganizeData from '../components/OrganizeData';
 
 export default function DirectoryPage() {
+  
 
   const [searchState, setSearchState] = useState({
     search: '',
     title: '',
-    format: 'list',
+    format: 'grid',
   })
 
   function handleSearchChange(e:any) {
@@ -64,18 +66,31 @@ export default function DirectoryPage() {
       </OrganizeData>
 
       {/* List of employees and information */}
-      <Employees searchState={searchState} />
+      {/* {data && data.employees ? */}
+      <PaginatedItems searchState={searchState}></PaginatedItems>
+      {/* : ''} */}
+      {/* <EmployeesOld searchState={searchState} /> */}
     </div>
   );
 }
 
-function Employees({...props}) {
-  const initialCount = 48;
-  const increment = 48;
-  const [count, setCount] = useState({});
+function PaginatedItems({ ...props }) {
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
   const [queryName, setQueryName] = useState(
     PAGINATED_EMPLOYEES
   );
+
+  let limit = 24;
+  let { loading, error, data, refetch, fetchMore } = useQuery(queryName, {
+    variables: {
+      skip: 0,
+      take: limit,
+      title: ""
+    },
+  });
 
   useEffect(() => {
     // If searching by title, use the query
@@ -83,52 +98,78 @@ function Employees({...props}) {
       setQueryName(EMPLOYEES_FILTER_TITLE)
       refetch({
         skip: 0,
-        take: initialCount,
+        take: limit,
         title: props.searchState.title
       })
     } else {
       setQueryName(PAGINATED_EMPLOYEES)
       refetch({
         skip: 0,
-        take: initialCount
+        take: limit
       })
     }
+    setItemOffset(0)
   }, [props.searchState.title])
 
   // For initial search state change, refetch
   useEffect(() => {
     refetch({
       skip: 0,
-      take: initialCount,
+      take: limit,
       title: props.searchState.title
     })
   }, [queryName])
 
-  let { loading, error, data, refetch, fetchMore } = useQuery(queryName, {
-    variables: {
-      skip: 0,
-      take: initialCount,
-      title: ""
-    },
-  });
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + limit;
+    if (data){
+      setCurrentItems(data.employees)
+      setPageCount(Math.ceil(data.employeesCount / limit));
+    }
+  }, [itemOffset, props.itemsPerPage, data, props.searchState.title]);
 
-  function onLoadMore() {
-    console.log(
+  // Invoke when user click to request another page.
+  const handlePageClick = (event:any) => {
+    const newOffset = (event.selected * limit) % data.employeesCount;
     fetchMore({
       variables: {
-        skip: data.employees.length
-      },
-    }))
-    console.log(data)
-  }
+        skip: newOffset,
+      }
+    })
+    setItemOffset(newOffset);
+  };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
+  return (
+    <div>
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel=">"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={10}
+        pageCount={pageCount}
+        previousLabel="<"
+        marginPagesDisplayed={1}
+        containerClassName="flex flex-row text-xs font-bold mb-2 justify-end leading-loose	"
+        pageClassName="flex h-6 justify-center align-center"
+        pageLinkClassName="px-2 border h-full	"
+        activeLinkClassName="bg-blue-100"
+        previousClassName="flex h-6"
+        previousLinkClassName="px-2 border rounded-l-lg"
+        nextClassName="flex h-6"
+        nextLinkClassName="px-2 border rounded-r-lg"
+      />
+      <Employees currentItems={currentItems} searchState={props.searchState} />
+    </div>
+  );
+}
 
-  let dataEmployees = data.employees;
+export function Employees ({...props}) {
+  let currentEmployees = props.currentItems;
 
-  if (data && data.employees && props && props.searchState.search) {
-    const filteredEmployees = data.employees.filter(
+  // Search currently provided employees. Eventually should query all pages of relevant employees.
+  if (props.currentItems && props && props.searchState.search) {
+    const filteredEmployees = props.currentItems.filter(
       (employee:any) => {
         return (
           employee
@@ -150,19 +191,21 @@ function Employees({...props}) {
         );
       }
     );
-    dataEmployees = filteredEmployees;
+    currentEmployees = filteredEmployees
+  }
+
+  if (!currentEmployees) {
+    return (
+      <p>Loading</p>
+    )
   }
 
   return (
     <div>
       {props.searchState.format === 'grid' ?
-      <EmployeeGrid employees={dataEmployees}></EmployeeGrid>
-      : ''}
+        <EmployeeGrid employees={currentEmployees}></EmployeeGrid> : ''}
       {props.searchState.format === 'list' ?
-      <EmployeeList employees={dataEmployees}></EmployeeList>
-      : '' }
-          
-      <button onClick={() => onLoadMore()}>Load More</button>
+        <EmployeeList employees={currentEmployees}></EmployeeList> : ''}
     </div>
   )
 }

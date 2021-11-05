@@ -1,3 +1,6 @@
+// Individual employee page. 
+// Displays their info and allows you to update the data or delete them.
+
 import { useState } from 'react';
 import {
   useLocation,
@@ -12,31 +15,8 @@ import Moment from 'react-moment';
 
 import { IconProfile } from "../components/Icons";
 import EmployeeFormFields from '../components/forms/EmployeeFormFields';
-
-const GET_EMPLOYEE = gql`
-  query GetEmployee($slug: String) {
-    employee(where: {slug: $slug}) {
-      id
-      firstName
-      lastName
-      email
-      slug
-      city
-      state
-      country
-      dob
-      phone
-      photo
-      status
-      title {
-        name
-      }
-      teams {
-        name
-      }
-    }
-  }
-`
+import { GET_EMPLOYEE } from "../Queryies";
+import { UPDATE_EMPLOYEE_MUTATION, DELETE_EMPLOYEE } from "../Mutations";
 
 export default function EmployeePage() {
 
@@ -62,57 +42,20 @@ export default function EmployeePage() {
 
   return (
     <div>
-      <div className="h-20 bg-blue-500 -mx-10">
+      {/* Decorative border */}
+      <div className="h-20 bg-blue-500 -mx-10"></div> 
 
-      </div>
       <div className="flex flex-row justify-between">
 
         {/* Employee Info */}
-        <div className="flex flex-row">
-          <div className="flex flex-col justify-start items-start mr-16 -mt-20 pt-1">
-            <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
-              {employee.photo ?
-              <img src={employee.photo} className="min-w-full min-h-full" />
-              : 
-              <IconProfile></IconProfile>
-              }
-            </div>
-            <div className="flex flex-row"> 
-              <div className="flex flex-col justify-start items-start mr-10">
-                <p className="font-bold text-xl mb-2">{employee.firstName} {employee.lastName}</p>
-                <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-4 w-auto">{employee.title.name}</p>
-                <p className="text-sm mb-1 font-bold">Teams:</p>
-                <div className="mb-2">
-                  {employee.teams && employee.teams.map((team:any) => (
-                    <p key={team.name} className="bg-gray-200 px-3 py-1 text-sm rounded-2xl mb-2 mr-2 w-auto">{team.name}</p>
-                  ))}
-                </div>
-                <p className="text-sm mb-1 font-bold">Contact</p>
-                <a href={"mailto:" + employee.email}><p>{employee.email}</p></a>
-                <a className="mb-4" href={"tel:" + employee.phone}><p>{employee.phone}</p></a>
-              </div>
-              <div className="flex flex-col justify-start items-start pt-8">
-                <p className="text-sm mb-1 font-bold">Location</p>
-                <p className="mb-4">{employee.city}, {employee.state}, {employee.country}</p>
-                <p className="text-sm mb-1 font-bold">Birthday</p>
-                <p className="mb-4"><Moment format="MM/DD/YYYY">{employee.dob}</Moment></p>
-                <p className="text-sm mb-1 font-bold">Status</p>
-                <p className="mb-4">{employee.status}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <EmployeeInfo employee={employee}></EmployeeInfo>
 
-        {/* Update Employee */}
+        {/* Update Employee Form */}
         <div>
           <div>
             <p className="text-lg font-bold my-4">Update Employee</p>
             <UpdateEmployeeForm employee={employee} onSubmit={() => refetch({})}></UpdateEmployeeForm>
           </div>
-
-          {/* Delete Employee */}
-          <button></button>
-
         </div>
 
       </div>
@@ -120,64 +63,47 @@ export default function EmployeePage() {
   )
 }
 
-const UPDATE_EMPLOYEE_MUTATION = gql`
-  mutation UpdateEmployee(
-    $firstName: String!
-    $lastName: String!
-    $email: String!
-    $slug: String!
-    $city: String!
-    $state: String!
-    $country: String!
-    $dob: String!
-    $phone: String!
-    $photo: String!
-    $status: String!
-    $title: String!
-  ) {
-    updateEmployee(
-      data: {
-        firstName: $firstName, 
-        lastName: $lastName, 
-        email: $email, 
-        city: $city,
-        state: $state,
-        country: $country,
-        dob: $dob,
-        phone: $phone,
-        photo: $photo,
-        status: $status,
-        title: { connect: { name: $title}}
-        }
-      where: {slug: $slug}
-      ) {
-      firstName
-      lastName
-      email
-      city
-      state
-      country
-      dob
-      phone
-      photo
-      status
-      title {
-        name
-      }
-      teams {
-        name
-      }
-    }
-  }
-`;
+// Display the employee's information
+function EmployeeInfo({...props}) {
+  const employee = props.employee;
 
-const DELETE_EMPLOYEE = gql`
-  mutation DeleteEmployee($slug: String) {
-    deleteEmployee(where:{slug:$slug}) {
-      slug
-    }
-  }
-`
+  return (
+    <div className="flex flex-row">
+      <div className="flex flex-col justify-start items-start mr-16 -mt-20 pt-1">
+        <div className="w-28 h-28 m-4 rounded-full overflow-hidden bg-blue-300">
+          {employee.photo ?
+          <img src={employee.photo} className="min-w-full min-h-full" />
+          : 
+          <IconProfile></IconProfile>
+          }
+        </div>
+        <div className="flex flex-row"> 
+          <div className="flex flex-col justify-start items-start mr-10">
+            <p className="font-bold text-xl mb-2">{employee.firstName} {employee.lastName}</p>
+            <p className="bg-blue-100 text-gray-800 px-3 py-1 text-sm rounded-2xl mb-4 w-auto">{employee.title.name}</p>
+            <p className="text-sm mb-1 font-bold">Teams:</p>
+            <div className="mb-2">
+              {employee.teams && employee.teams.map((team:any) => (
+                <p key={team.name} className="bg-gray-200 px-3 py-1 text-sm rounded-2xl mb-2 mr-2 w-auto">{team.name}</p>
+              ))}
+            </div>
+            <p className="text-sm mb-1 font-bold">Contact</p>
+            <a href={"mailto:" + employee.email}><p>{employee.email}</p></a>
+            <a className="mb-4" href={"tel:" + employee.phone}><p>{employee.phone}</p></a>
+          </div>
+          <div className="flex flex-col justify-start items-start pt-8">
+            <p className="text-sm mb-1 font-bold">Location</p>
+            <p className="mb-4">{employee.city}, {employee.state}, {employee.country}</p>
+            <p className="text-sm mb-1 font-bold">Birthday</p>
+            <p className="mb-4"><Moment format="MM/DD/YYYY">{employee.dob}</Moment></p>
+            <p className="text-sm mb-1 font-bold">Status</p>
+            <p className="mb-4">{employee.status}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function UpdateEmployeeForm({...props}) {
   const [deleted, setDeleted] = useState(false)
@@ -214,6 +140,7 @@ function UpdateEmployeeForm({...props}) {
     }
   });
 
+  // When data is changed, update the appropriate variable in the state. 
   function handleFormState(name:string, e:any) {
     setFormState({
       ...formState,
@@ -221,23 +148,22 @@ function UpdateEmployeeForm({...props}) {
     })
   }
 
+  // Use the mutation to delelet the employee, then update the state so we can redirect.
   function handleDelete() {
-
     deleteEmployee()
     .then((res) => {
       setDeleted(true)
     });
-    
   }
 
   const [deleteEmployee] = useMutation(DELETE_EMPLOYEE, {
     variables: {slug: props.employee.slug}
   })
 
+  // When deleted, redirect to the main directory.
   if (deleted) {
     return (<Redirect to="/"></Redirect>)
   }
-
 
   return (
     <form

@@ -1,11 +1,8 @@
+// GraphQL Queryies
+
 import {
   gql
 } from "@apollo/client";
-
-
-//
-// Queries
-// 
 
 // Get a portion of paginated employees
 export const PAGINATED_EMPLOYEES = gql`
@@ -75,6 +72,31 @@ export const GET_TITLES = gql`
   query GetTitles {
     titles {
       name
+    }
+  }
+`
+
+export const GET_EMPLOYEE = gql`
+  query GetEmployee($slug: String) {
+    employee(where: {slug: $slug}) {
+      id
+      firstName
+      lastName
+      email
+      slug
+      city
+      state
+      country
+      dob
+      phone
+      photo
+      status
+      title {
+        name
+      }
+      teams {
+        name
+      }
     }
   }
 `

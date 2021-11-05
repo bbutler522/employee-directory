@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import {
+  Redirect
+} from "react-router-dom";
+import {
   useMutation,
   gql
 } from "@apollo/client";
@@ -41,6 +44,7 @@ const CREATE_EMPLOYEE_MUTATION = gql`
 `;
 
 export default function EmployeeCreatePage() {
+  const [created, setCreated] = useState(false)
   const [formState, setFormState] = useState({
     firstName: '',
     lastName: '',
@@ -56,6 +60,12 @@ export default function EmployeeCreatePage() {
     title: '',
 
   })
+
+  function handleCreateEmployee() {
+    createEmployee().then((res) => {
+      setCreated(true)
+    });
+  }
 
   const [createEmployee] = useMutation(CREATE_EMPLOYEE_MUTATION, {
     variables: {
@@ -81,19 +91,24 @@ export default function EmployeeCreatePage() {
     })
   }
 
+  // When created, redirect to the new employee
+  if (created) {
+    return (<Redirect to={"/employee/" + formState.slug}></Redirect>)
+  }
+
   return (
     <div>
       <h2 className="text-3xl font-bold text-black pt-8 pb-8">Create a new employee</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          createEmployee();
+          handleCreateEmployee();
         }}
       >
         
         <EmployeeFormFields formState={formState} handleFormState={handleFormState}></EmployeeFormFields>
         
-        <button type="submit">Submit</button>
+        <button type="submit" className="py-2 px-8 rounded-xl bg-blue-200 border border-solid border-gray-400 text-sm font-bold transition-all hover:bg-blue-400" >Create Employee</button>
       </form>
     </div>
   )
